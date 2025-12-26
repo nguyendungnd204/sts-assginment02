@@ -3,8 +3,6 @@ import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  // Tạo 3 microservice instances từ cùng 1 AppModule
-  // Mỗi instance có consumer group riêng để đạt fanout pattern
   
   const emailConsumer = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
