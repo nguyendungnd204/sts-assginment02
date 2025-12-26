@@ -3,20 +3,61 @@ import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule, 
+  // Tạo 3 microservice instances từ cùng 1 AppModule
+  // Mỗi instance có consumer group riêng để đạt fanout pattern
+  
+  const emailConsumer = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
     {
       transport: Transport.KAFKA,
       options: {
         client: {
-          brokers: ['localhost:9093'],
+          clientId: 'email-consumer',
+          brokers: [process.env.KAFKA_BROKER || 'localhost:9093'],
+        },
+        consumer: {
+          groupId: 'email-notification-group',
+        },
+      },
+    },
+  );
+
+  const smsConsumer = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.KAFKA,
+      options: {
+        client: {
+          clientId: 'sms-consumer',
+          brokers: [process.env.KAFKA_BROKER || 'localhost:9093'],
+        },
+        consumer: {
+          groupId: 'sms-notification-group',
+        },
+      },
+    },
+  );
+
+  const taskReminderConsumer = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.KAFKA,
+      options: {
+        client: {
+          clientId: 'reminder-consumer',
+          brokers: [process.env.KAFKA_BROKER || 'localhost:9093'],
         },
         consumer: {
           groupId: 'task-reminder-consumer-group',
         },
-      }
-    });
-    await app.listen();
-    console.log('🚀 Consumer service is listening to Kafka...');
+      },
+    },
+  );
+
+  await emailConsumer.listen();
+  await smsConsumer.listen();
+  await taskReminderConsumer.listen();
+
+  console.log('🚀 Consumer service is listening to Kafka with 3 separate consumer groups...');
 }
 bootstrap();

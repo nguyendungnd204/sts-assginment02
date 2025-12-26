@@ -5,6 +5,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { KafkaModule } from './kafka/kafka.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -32,6 +33,8 @@ import { KafkaModule } from './kafka/kafka.module';
     }),
 
     KafkaModule,
+
+    ProductsModule,
 
     
   ],

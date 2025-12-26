@@ -9,7 +9,7 @@ export class TaskReminderConsumer {
         private readonly reminderService: TaskReminderService,
     ) {}
 
-    @MessagePattern('task-reminder')
+    @MessagePattern('tasks.reminder')
     async handleReminder(@Payload() data: any)
     {
         try {
@@ -23,6 +23,6 @@ export class TaskReminderConsumer {
 
     private handleError(payload: any, error: Error, sourceTopic: string)
     {
-        
+
     }
 }

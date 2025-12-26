@@ -10,13 +10,14 @@ export class TaskReminderProducer implements OnModuleInit {
         @Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka,
     ) {}
 
-    async onModuleInit() {
+    async onModuleInit() 
+    {
         await this.kafkaClient.connect();
     }
 
     async sendReminderEvent(payload: TaskReminderDto)
     {
-        await this.kafkaClient.emit('task-reminder',payload);
-        this.logger.log(`Sent task reminder event from producer for taskId: ${payload.taskId}`);
+        await this.kafkaClient.emit('tasks.reminder', payload);
+        this.logger.log(`Producer: Sent task reminder event from producer for taskId: ${payload.taskId}`);
     }
 }
